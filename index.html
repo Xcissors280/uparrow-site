@@ -10,16 +10,42 @@
             border-right: 50px solid transparent;
             border-bottom: 100px solid red;
         }
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div id="arrow"></div>
+    <div id="message"></div>
 
     <script>
-        window.addEventListener('deviceorientation', function(event) {
+        function handleOrientation(event) {
             var arrow = document.getElementById('arrow');
             arrow.style.transform = 'rotate(' + event.alpha + 'deg)';
-        });
+        }
+
+        if (window.DeviceOrientationEvent) {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        window.addEventListener('deviceorientation', handleOrientation);
+                    } else {
+                        document.getElementById('message').textContent = "Permission to access the DeviceOrientation API was denied.";
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    document.getElementById('message').textContent = "An error occurred while trying to access the DeviceOrientation API.";
+                });
+        } else {
+            document.getElementById('message').textContent = "Sorry, your browser doesn't support the DeviceOrientation API.";
+        }
     </script>
 </body>
-</html>
+</html> 
